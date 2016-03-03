@@ -1,0 +1,65 @@
+/*
+ * adc_task.c
+ *
+ *  Created on: Mar 2, 2016
+ *      Author: mortenopprudjakobsen
+ */
+
+#include <string.h>
+
+#include "board.h"
+#include "pin_mux.h"
+#include "clock_config.h"
+#include "fsl_debug_console.h"
+#include "fsl_adc16.h"
+#include "adc_task.h"
+
+#include "fsl_pit.h"
+#include "clock_config.h"
+
+/*!
+* @brief Task responsible for printing of "Hello world." message.
+*/
+void adc_task(void *pvParameters)
+{
+
+	int res;
+	int val = 2;
+	unsigned short *ptr;
+
+#if 1
+	/* We are using the semaphore for synchronisation so we create a binary
+	 semaphore rather than a mutex.
+	 We must make sure that the interrupt
+	 does not attempt to use the semaphore before it is created! */
+	xSemaphore = xSemaphoreCreateBinary();
+	/* queue for passing pointers to the sample array */
+	//sampleQhdl = xQueueCreate(10, sizeof(unsigned short *));
+	/* setup ADC*/
+	adc_init(DEMO_ADC16_USER_CHANNEL);
+	/* and trigger timer */
+	init_trigger_source(1);
+	startSampling();
+
+	/* semaphore from ISR signaling sample buffer full */
+	if (xSemaphore == NULL)
+	{
+		PRINTF("Error creating semaphore\r\n");
+		vTaskSuspend(NULL);
+	}
+#endif
+
+	for (;;)
+	{
+
+		/*Block waiting for the samples/semaphore to become available. */
+		if ( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE)
+		{
+
+			//PRINTF("got samples");
+			LED_RED_TOGGLE();
+		}
+		//vTaskSuspend(NULL);
+	}
+}
+

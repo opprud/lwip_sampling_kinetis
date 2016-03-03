@@ -1,0 +1,24 @@
+/*
+ * adc_task.h
+ *
+ *  Created on: Mar 2, 2016
+ *      Author: mortenopprudjakobsen
+ */
+
+#ifndef SRC_ADC_TASK_H_
+#define SRC_ADC_TASK_H_
+
+/* FreeRTOS kernel includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "timers.h"
+#include "semphr.h"
+
+#define NO_SAMPLES	2048 //4096 //1024 //8192//1024
+
+#define DEMO_ADC16_USER_CHANNEL 12U /* PTB2, ADC0_SE12 */
+
+void adc_task(void *pvParameters);
+
+#endif /* SRC_ADC_TASK_H_ */
