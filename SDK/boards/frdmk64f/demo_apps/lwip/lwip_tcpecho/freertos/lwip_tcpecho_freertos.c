@@ -34,6 +34,7 @@
 #include "echo.h"
 
 #include "lwip/opt.h"
+//#include "../lwip/src/include/opt.h"
 
 #if LWIP_NETCONN
 /* Standard C Included Files */
@@ -107,7 +108,6 @@ static void tcpdata_thread(void *arg)
 	// Bind connection to well known port number 7
 	netconn_bind(conn, NULL, 7);
 
-	char tx[2 * NO_SAMPLES];
 	// Tell connection to go into listening mode
 	netconn_listen(conn);
 
@@ -128,42 +128,36 @@ static void tcpdata_thread(void *arg)
 			{
 				do
 				{
+					//GPIO_TogglePinsOutput(GPIOE, 1U << 24);
+					/*debug*/
+					//GPIO_WritePinOutput(GPIOE,24,1);
 					netbuf_data(buf, &data, &len);
 					strcpy(cmd, data);
 
 					if (!strcmp(cmd, "GET_SAMPLES"))
 					{
-#if 1
-//						for(int i=0;i<(2*NO_SAMPLES);i++)
-//							tx[i] = rand();
+						//GPIO_TogglePinsOutput(GPIOE, 1U << 24);
 
-//						err = netconn_write(newconn, tx, 2*NO_SAMPLES, NETCONN_COPY);
-//						err = netconn_write(newconn, tx, NO_SAMPLES, NETCONN_COPY);
-
-//							#else
 						/* on sub array length is...*/
 						len = 2 * NO_SAMPLES;
 
 						if (sample_buff_in_use == 0)
 						{
 							err = netconn_write(newconn, adcSamples2, len, NETCONN_COPY);
-//							memcpy(tx, adcSamples2, len);
 						}
 						else if (sample_buff_in_use == 1)
 						{
 							err = netconn_write(newconn, adcSamples0, len, NETCONN_COPY);
-//							memcpy(tx, adcSamples0, len);
 						}
 						else if (sample_buff_in_use == 2)
 						{
 							err = netconn_write(newconn, adcSamples1, len, NETCONN_COPY);
-//							memcpy(tx, adcSamples1, len);
 						}
 
-//						err = netconn_write(newconn, tx, len, NETCONN_COPY);
-#endif
 						LED_GREEN_TOGGLE();
 					}
+					/*debug*/
+					//GPIO_WritePinOutput(GPIOE,24,0);
 
 				} while (netbuf_next(buf) >= 0);
 				netbuf_delete(buf);
@@ -174,49 +168,7 @@ static void tcpdata_thread(void *arg)
 		}
 	}
 }
-#if 0
-static void tcpecho_thread(void *arg)
-{
-	struct netconn *conn, *newconn;
-	err_t err;
-	LWIP_UNUSED_ARG(arg);
-	netif_set_up(&fsl_netif0);
-	/* Create a new connection identifier */
-	conn = netconn_new(NETCONN_TCP);
 
-	/* Bind connection to well known port number 7 */
-	netconn_bind(conn, NULL, 7);
-
-	/* Tell connection to go into listening mode */
-	netconn_listen(conn);
-
-	while (1)
-	{
-		/* Grab new connection. */
-		err = netconn_accept(conn, &newconn);
-		/* Process the new connection. */
-		if (err == ERR_OK)
-		{
-			struct netbuf *buf;
-			void *data;
-			u16_t len;
-
-			while ((err = netconn_recv(newconn, &buf)) == ERR_OK)
-			{
-				do
-				{
-					netbuf_data(buf, &data, &len);
-					err = netconn_write(newconn, data, len, NETCONN_COPY);
-				}while (netbuf_next(buf) >= 0);
-				netbuf_delete(buf);
-			}
-			/* Close connection and discard connection identifier. */
-			netconn_close(newconn);
-			netconn_delete(newconn);
-		}
-	}
-}
-#endif
 void tcpecho_init(void)
 {
 	//sys_thread_new("tcpecho_thread", tcpecho_thread, NULL, TCPECHO_STACKSIZE, TCPECHO_PRIORITY);
@@ -240,7 +192,7 @@ int main(void)
 	/* Disable MPU. */
 	base->CESR &= ~MPU_CESR_VLD_MASK;
 
-	LWIP_DEBUGF(TCPECHO_DBG, ("TCP/IP initializing...\r\n"));
+	LWIP_DEBUGF(TCPECHO_DBG, ("TCP/IP initializing....\r\n"));
 	tcpip_init(NULL, NULL);
 	LWIP_DEBUGF(TCPECHO_DBG, ("TCP/IP initializing...\r\n"));
 
@@ -256,7 +208,7 @@ int main(void)
 
 	LWIP_PLATFORM_DIAG(
 			("\r\n************************************************"));
-	LWIP_PLATFORM_DIAG((" TCP Echo example MOJ"));
+	LWIP_PLATFORM_DIAG((" TCP Echo example MOJ2"));
 	LWIP_PLATFORM_DIAG(("************************************************"));
 	LWIP_PLATFORM_DIAG(
 			(" IPv4 Address     : %u.%u.%u.%u", ((u8_t *)&fsl_netif0_ipaddr)[0], ((u8_t *)&fsl_netif0_ipaddr)[1], ((u8_t *)&fsl_netif0_ipaddr)[2], ((u8_t *)&fsl_netif0_ipaddr)[3]));

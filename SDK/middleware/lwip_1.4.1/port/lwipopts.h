@@ -86,12 +86,13 @@
  * a lot of data that needs to be copied, this should be set high.
  */
 
-#define MEM_SIZE                (6*1024)
+//#define MEM_SIZE                (6*1024)
+#define MEM_SIZE                (12*1024)
 
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
    should be set high. */
-#define MEMP_NUM_PBUF           10
+#define MEMP_NUM_PBUF           20//10
 /* MEMP_NUM_UDP_PCB: the number of UDP protocol control blocks. One
    per active UDP "connection". */
 #define MEMP_NUM_UDP_PCB        6

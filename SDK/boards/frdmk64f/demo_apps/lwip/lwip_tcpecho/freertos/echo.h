@@ -45,6 +45,7 @@ void tcpecho_init(void);
 
 #ifndef TCPECHO_STACKSIZE
 #define TCPECHO_STACKSIZE 3000
+//#define TCPECHO_STACKSIZE 5000
 #endif
 
 #ifndef TCPECHO_PRIORITY

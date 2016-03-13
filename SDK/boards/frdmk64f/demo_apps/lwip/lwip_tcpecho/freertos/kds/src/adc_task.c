@@ -29,9 +29,13 @@
 /*******************************************************************************
  * module variables
  ******************************************************************************/
-  uint8_t adcSamples0[2*NO_SAMPLES];
-  uint8_t adcSamples1[2*NO_SAMPLES];
-  uint8_t adcSamples2[2*NO_SAMPLES];
+unsigned int sample_index = 0;
+//unsigned int sample_buff_in_use = 0;
+uint8_t sample_buff_in_use = 0;
+
+uint8_t adcSamples0[2*NO_SAMPLES];
+uint8_t adcSamples1[2*NO_SAMPLES];
+uint8_t adcSamples2[2*NO_SAMPLES];
 
 
 static  adc16_channel_config_t adc16ChannelConfigStruct;
@@ -44,6 +48,7 @@ static  adc16_channel_config_t adc16ChannelConfigStruct;
 void PIT0_IRQHandler(void)
 {
 	short dummy;
+	/*debug*/
 	GPIO_TogglePinsOutput(GPIOE, 1U << 24);
 
 	/* read previous conversion */
@@ -73,6 +78,8 @@ void PIT0_IRQHandler(void)
 	/* buffer is full, notify and update */
 	if (sample_index >= 2*NO_SAMPLES)
 	{
+		GPIO_TogglePinsOutput(GPIOE, 1U << 25);
+
 		sample_index = 0;
 		if (sample_buff_in_use == 0)
 			sample_buff_in_use = 1;
@@ -130,7 +137,8 @@ void init_trigger_source(uint32_t adcInstance)
 	PIT_Init(PIT, &pitConfig);
 	/* Set timer period for channel 0 */
 //	PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, USEC_TO_COUNT(freqUs, PIT_SOURCE_CLOCK));
-	PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, USEC_TO_COUNT(100, PIT_SOURCE_CLOCK));
+//	PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, USEC_TO_COUNT(100, PIT_SOURCE_CLOCK));
+	PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, USEC_TO_COUNT(50, PIT_SOURCE_CLOCK));//=Fs20KHz
 	/* Enable timer interrupts for channel 0 */
 	PIT_EnableInterrupts(PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
 }

@@ -86,11 +86,17 @@ void BOARD_InitPins(void) {
 	/* Affects PORTA_PCR28 register */
 	PORT_SetPinMux(PORTA, 28u, kPORT_MuxAlt4);
 
-	/* debug pin */
+	/* debug pins */
 	pinCfg.pinDirection = kGPIO_DigitalOutput;
 	CLOCK_EnableClock(kCLOCK_PortE);
 	PORT_SetPinMux(PORTE, 24U, kPORT_MuxAsGpio);
-	GPIO_PinInit(GPIOE, 24U, &pinCfg);
+	GPIO_PinInit(GPIOE, 24U, &pinCfg);	//D15
+	PORT_SetPinMux(PORTE, 25U, kPORT_MuxAsGpio);
+	GPIO_PinInit(GPIOE, 25U, &pinCfg);	//D14
+/*
+	PORT_SetPinMux(PORTA, 0, kPORT_MuxAsGpio);//D8
+	GPIO_PinInit(GPIOA, 0, &pinCfg);
+*/
 
 	/* Initialize LED pins below */
 	/* Led pin mux Configuration */
